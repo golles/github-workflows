@@ -1,0 +1,79 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate config for Python projects",
+  "extends": ["config:recommended"],
+  "schedule": ["before 9am"],
+  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "pre-commit": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Devcontainer updates",
+      "matchManagers": ["devcontainer"],
+      "addLabels": ["devcontainer"],
+      "automerge": false
+    },
+    {
+      "description": "Github actions",
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github-actions"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Javascript dependencies ignore node engine",
+      "matchManagers": ["npm"],
+      "matchDepNames": ["node"],
+      "enabled": false
+    },
+    {
+      "description": "Javascript dependencies",
+      "matchManagers": ["npm"],
+      "addLabels": ["javascript"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Python dependencies",
+      "matchManagers": ["pep621"],
+      "addLabels": ["python"]
+    },
+    {
+      "description": "Pre-commit hooks",
+      "matchManagers": ["pre-commit"],
+      "addLabels": ["pre-commit"],
+      "automerge": true
+    },
+    {
+      "description": "Automerge non-major updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "description": "Automerge and pin dev dependencies",
+      "matchDepTypes": ["devDependencies", "dev-dependencies", "dev"],
+      "automerge": true,
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Python version follows Home Assistant: don't update requires-python, update it manually",
+      "matchDepTypes": ["requires-python"],
+      "enabled": false
+    },
+    {
+      "description": "Python version follows Home Assistant: don't update .python-version, update it manually",
+      "matchManagers": ["pyenv"],
+      "enabled": false
+    },
+    {
+      "description": "Python version follows Home Assistant: don't update the Python devcontainer image",
+      "matchManagers": ["devcontainer"],
+      "matchPackageNames": ["mcr.microsoft.com/devcontainers/python"],
+      "enabled": false
+    }
+  ]
+}
