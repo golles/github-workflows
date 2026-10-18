@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate config for Home Assistant custom integrations",
+  "extends": ["github>golles/github-workflows//renovate/python"],
+  "packageRules": [
+    {
+      "description": "Python dependencies ignore pytest dependencies",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": [
+        "pytest",
+        "pytest-asyncio",
+        "pytest-cov",
+        "pytest-homeassistant-custom-component"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Ignore Home Assistant runtime dependencies (runhass group)",
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["runhass"],
+      "enabled": false
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+name: Python version
+
+on: # yamllint disable-line rule:truthy
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check-python-version:
+    name: Check Python version against Home Assistant
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code from GitHub
+        uses: actions/checkout@v7
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v10
+
+      - name: Check Python version
+        shell: bash
+        run: |
+          uv run --no-project --python 3 --with packaging python - <<'EOF'
+          """Check that the project's Python version matches Home Assistant.
+
+          - `.python-version` must be the same minor version as Home Assistant's minimum Python version.
+          - `requires-python` in `pyproject.toml` must allow Home Assistant's minimum Python version.
+          """
+
+          import json
+          import sys
+          import tomllib
+          import urllib.request
+          from pathlib import Path
+
+          from packaging.specifiers import SpecifierSet
+          from packaging.version import Version
+
+          with urllib.request.urlopen("https://pypi.org/pypi/homeassistant/json", timeout=30) as response:
+              info = json.load(response)["info"]
+
+          ha_version = info["version"]
+          ha_requires_python = SpecifierSet(info["requires_python"])
+          ha_minimum = min(Version(spec.version) for spec in ha_requires_python if spec.operator in (">=", "=="))
+          print(f"Home Assistant {ha_version} requires Python {ha_requires_python} (minimum {ha_minimum})")
+
+          errors = []
+
+          python_version_file = Path(".python-version")
+          if not python_version_file.is_file():
+              errors.append("`.python-version` is missing.")
+          else:
+              local = Version(python_version_file.read_text(encoding="utf-8").strip())
+              print(f".python-version: {local}")
+              if (local.major, local.minor) < (ha_minimum.major, ha_minimum.minor):
+                  errors.append(f"`.python-version` is {local}, but Home Assistant now requires Python {ha_minimum}. Time to update.")
+              elif (local.major, local.minor) > (ha_minimum.major, ha_minimum.minor):
+                  errors.append(f"`.python-version` is {local}, but Home Assistant still runs on Python {ha_minimum.major}.{ha_minimum.minor}.")
+
+          pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+          requires_python = SpecifierSet(pyproject["project"]["requires-python"])
+          print(f"requires-python: {requires_python}")
+          if not requires_python.contains(ha_minimum):
+              errors.append(f"`requires-python` ({requires_python}) doesn't allow Python {ha_minimum}, which Home Assistant runs on.")
+
+          for error in errors:
+              print(f"::error::{error}")
+
+          sys.exit(1 if errors else 0)
+          EOF
