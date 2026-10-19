@@ -60,19 +60,26 @@
       "rangeStrategy": "pin"
     },
     {
-      "description": "Python version follows Home Assistant: don't update requires-python, update it manually",
+      "description": "Python version is updated manually: don't update requires-python",
       "matchDepTypes": ["requires-python"],
       "enabled": false
     },
     {
-      "description": "Python version follows Home Assistant: don't update .python-version, update it manually",
+      "description": "Python version is updated manually: don't update .python-version",
       "matchManagers": ["pyenv"],
       "enabled": false
     },
     {
-      "description": "Python version follows Home Assistant: don't update the Python devcontainer image",
+      "description": "Python version is updated manually: don't update the Python devcontainer image",
       "matchManagers": ["devcontainer"],
       "matchPackageNames": ["mcr.microsoft.com/devcontainers/python"],
+      "enabled": false
+    },
+    {
+      "description": "Python version is updated manually: don't pin python-version in GitHub Actions, so 3.x keeps testing the latest Python",
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["uses-with"],
+      "matchDepNames": ["python"],
       "enabled": false
     }
   ]
