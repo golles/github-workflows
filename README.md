@@ -93,7 +93,8 @@ Based on `config:recommended`:
 - Pins GitHub Actions, npm and dev dependencies.
 - Automerges minor and patch updates of dependencies that are at `1.0.0` or later, and all dev dependency updates.
 - Doesn't automerge devcontainer updates.
-- Doesn't update the Python version: `requires-python`, `.python-version` and the `mcr.microsoft.com/devcontainers/python` image. The Python version follows Home Assistant and is updated manually; see [`python-version.yaml`](#python-versionyaml).
+- Doesn't update the Python version: `requires-python`, `.python-version` and the `mcr.microsoft.com/devcontainers/python` image. The Python version is updated manually, for example when Home Assistant moves to a newer version; see [`python-version.yaml`](#python-versionyaml).
+- Doesn't pin `python-version` in GitHub Actions (e.g. `3.x` in `actions/setup-python`), so jobs that test on the latest Python keep doing so.
 
 ### `ha-integration`
 
