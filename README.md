@@ -100,5 +100,5 @@ Based on `config:recommended`:
 
 Extends `python`, and also:
 
-- Doesn't update `pytest`, `pytest-asyncio`, `pytest-cov` and `pytest-homeassistant-custom-component`, as their versions follow Home Assistant.
+- Doesn't update `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-homeassistant` and `pytest-homeassistant-custom-component`, as their versions follow Home Assistant. They aren't pinned in `pyproject.toml`; lock file maintenance updates them, and with them the Home Assistant version the tests run against.
 - Doesn't update the `runhass` dependency group, which contains Home Assistant's runtime dependencies.
